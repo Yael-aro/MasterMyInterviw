@@ -1,0 +1,68 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String
+  role      String   @default("ADMIN") // "ADMIN" | "COACH"
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  clients Client[]
+}
+
+model Client {
+  id           String   @id @default(cuid())
+  name         String
+  phone        String
+  email        String?
+  source       String   @default("OTHER") // "LINKEDIN" | "WHATSAPP" | "REFERRAL" | "OTHER"
+  status       String   @default("PROSPECT") // "PROSPECT" | "IN_PREP" | "INTERVIEWED" | "PLACED"
+  notes        String?
+  assignedToId String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  assignedTo   User?         @relation(fields: [assignedToId], references: [id])
+  appointments Appointment[]
+  payments     Payment[]
+}
+
+model Appointment {
+  id        String   @id @default(cuid())
+  clientId  String
+  date      DateTime
+  duration  Int      @default(60)
+  type      String   // "ONLINE_COACHING" | "TECH_PREP" | "HR_PREP" | "COMM_PREP" | "MOCK_INTERVIEW" | "CV_OPTIM" | "LINKEDIN_OPTIM"
+  status    String   @default("SCHEDULED") // "SCHEDULED" | "COMPLETED" | "CANCELLED"
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  client   Client    @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  payments Payment[]
+}
+
+model Payment {
+  id            String   @id @default(cuid())
+  clientId      String
+  appointmentId String?
+  amount        Float
+  method        String   @default("TRANSFER") // "TRANSFER" | "CASH" | "WHATSAPP" | "OTHER"
+  status        String   @default("PENDING") // "PAID" | "PENDING"
+  date          DateTime @default(now())
+  label         String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  client      Client       @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  appointment Appointment? @relation(fields: [appointmentId], references: [id], onDelete: SetNull)
+}
