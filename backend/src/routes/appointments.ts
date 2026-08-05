@@ -1,11 +1,12 @@
 import { Router, Response } from 'express';
 import { PrismaClient } from '@prisma/client';
 import { authenticate, AuthRequest } from '../middleware/auth';
+import { createMeetEvent } from '../services/googleCalendar';
+import { sendAppointmentEmail } from '../services/email';
 
 const router = Router();
 const prisma = new PrismaClient();
 
-// GET /api/appointments
 router.get('/', authenticate, async (req: AuthRequest, res: Response) => {
   const { clientId, status, from, to } = req.query as Record<string, string>;
 
@@ -29,7 +30,6 @@ router.get('/', authenticate, async (req: AuthRequest, res: Response) => {
   return res.json(appointments);
 });
 
-// POST /api/appointments
 router.post('/', authenticate, async (req: AuthRequest, res: Response) => {
   const { clientId, date, duration, type, notes } = req.body;
 
@@ -37,23 +37,58 @@ router.post('/', authenticate, async (req: AuthRequest, res: Response) => {
     return res.status(400).json({ error: 'Client, date et type requis' });
   }
 
+  const client = await prisma.client.findUnique({ where: { id: clientId } });
+  if (!client) {
+    return res.status(404).json({ error: 'Client introuvable' });
+  }
+
+  const appointmentDate = new Date(date);
+  const appointmentDuration = duration || 60;
+
+  let meetLink: string | null = null;
+  try {
+    meetLink = await createMeetEvent({
+      summary: `Séance coaching — ${client.name}`,
+      description: notes || undefined,
+      startDateTime: appointmentDate,
+      durationMinutes: appointmentDuration,
+      attendeeEmail: client.email || undefined,
+    });
+  } catch (err) {
+    console.error('Erreur Google Calendar (non bloquant):', err);
+  }
+
   const appointment = await prisma.appointment.create({
     data: {
       clientId,
-      date: new Date(date),
-      duration: duration || 60,
+      date: appointmentDate,
+      duration: appointmentDuration,
       type,
       notes,
+      meetLink,
     },
     include: {
       client: { select: { id: true, name: true, phone: true } },
     },
   });
 
+  if (client.email) {
+    try {
+      await sendAppointmentEmail({
+        to: client.email,
+        clientName: client.name,
+        appointmentType: type,
+        date: appointmentDate,
+        meetLink,
+      });
+    } catch (err) {
+      console.error('Erreur envoi email (non bloquant):', err);
+    }
+  }
+
   return res.status(201).json(appointment);
 });
 
-// GET /api/appointments/:id
 router.get('/:id', authenticate, async (req: AuthRequest, res: Response) => {
   const { id } = req.params;
   const appointment = await prisma.appointment.findUnique({
@@ -67,7 +102,6 @@ router.get('/:id', authenticate, async (req: AuthRequest, res: Response) => {
   return res.json(appointment);
 });
 
-// PUT /api/appointments/:id
 router.put('/:id', authenticate, async (req: AuthRequest, res: Response) => {
   const { id } = req.params;
   const { date, duration, type, status, notes } = req.body;
@@ -89,7 +123,6 @@ router.put('/:id', authenticate, async (req: AuthRequest, res: Response) => {
   return res.json(appointment);
 });
 
-// DELETE /api/appointments/:id
 router.delete('/:id', authenticate, async (req: AuthRequest, res: Response) => {
   const { id } = req.params;
   await prisma.appointment.delete({ where: { id } });

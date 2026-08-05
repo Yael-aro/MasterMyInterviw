@@ -13,7 +13,7 @@ import {
 import { useAuth } from '../../context/AuthContext';
 
 const navItems = [
-  { to: '/', icon: LayoutDashboard, label: 'Tableau de bord', exact: true },
+  { to: '/admin', icon: LayoutDashboard, label: 'Tableau de bord', exact: true },
   { to: '/clients', icon: Users, label: 'Clients' },
   { to: '/appointments', icon: Calendar, label: 'Rendez-vous' },
   { to: '/payments', icon: CreditCard, label: 'Paiements' },

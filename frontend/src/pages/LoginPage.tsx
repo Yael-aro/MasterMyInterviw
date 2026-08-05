@@ -18,7 +18,7 @@ export const LoginPage = () => {
     setIsLoading(true);
     try {
       await login(email, password);
-      navigate('/');
+      navigate('/admin');
     } catch (err: unknown) {
       const axiosErr = err as { response?: { data?: { error?: string } } };
       setError(axiosErr.response?.data?.error || 'Identifiants incorrects');

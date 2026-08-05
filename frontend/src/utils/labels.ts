@@ -25,6 +25,7 @@ export const CLIENT_SOURCE_LABELS: Record<ClientSource, string> = {
   LINKEDIN: 'LinkedIn',
   WHATSAPP: 'WhatsApp',
   REFERRAL: 'Recommandation',
+  WEBSITE: 'Site web',
   OTHER: 'Autre',
 };
 

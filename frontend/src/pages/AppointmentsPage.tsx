@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Plus, Calendar, Check, X, Clock, Filter } from 'lucide-react';
+import { Plus, Calendar, Check, X, Clock, Filter, Video } from 'lucide-react';
 import { getAppointments, createAppointment, updateAppointment, deleteAppointment } from '../api/appointments';
 import { getClients } from '../api/clients';
 import { AppointmentForm } from '../components/appointments/AppointmentForm';
@@ -182,6 +182,20 @@ export const AppointmentsPage = () => {
                             <p className="text-xs text-cream-subtle mt-1 line-clamp-1">{appt.notes}</p>
                           )}
                         </div>
+
+                        {/* Meet link */}
+                        {appt.meetLink && appt.status === 'SCHEDULED' && (
+                          <a
+                            href={appt.meetLink}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gold/10 border border-gold/20 text-gold text-xs font-medium hover:bg-gold/20 transition-colors"
+                            title="Rejoindre la visio"
+                          >
+                            <Video size={13} />
+                            <span className="hidden sm:inline">Rejoindre</span>
+                          </a>
+                        )}
 
                         {/* Actions */}
                         {appt.status === 'SCHEDULED' && (

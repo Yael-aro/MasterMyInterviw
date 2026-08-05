@@ -1,5 +1,5 @@
 // Client types
-export type ClientSource = 'LINKEDIN' | 'WHATSAPP' | 'REFERRAL' | 'OTHER';
+export type ClientSource = 'LINKEDIN' | 'WHATSAPP' | 'REFERRAL' | 'WEBSITE' | 'OTHER';
 export type ClientStatus = 'PROSPECT' | 'IN_PREP' | 'INTERVIEWED' | 'PLACED';
 
 export interface Client {
@@ -10,6 +10,7 @@ export interface Client {
   source: ClientSource;
   status: ClientStatus;
   notes?: string;
+  meetLink?: string | null;
   assignedToId?: string;
   createdAt: string;
   updatedAt: string;
@@ -38,6 +39,7 @@ export interface Appointment {
   type: AppointmentType;
   status: AppointmentStatus;
   notes?: string;
+  meetLink?: string | null;
   createdAt: string;
   client?: { id: string; name: string; phone: string };
   payments?: Payment[];
