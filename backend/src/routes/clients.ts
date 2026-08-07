@@ -38,7 +38,7 @@ router.get('/', authenticate, async (req: AuthRequest, res: Response) => {
 
 // POST /api/clients
 router.post('/', authenticate, async (req: AuthRequest, res: Response) => {
-  const { name, phone, email, source, status, notes } = req.body;
+  const { name, phone, email, source, status, notes, school } = req.body;
 
   if (!name || !phone) {
     return res.status(400).json({ error: 'Nom et téléphone requis' });
@@ -46,7 +46,7 @@ router.post('/', authenticate, async (req: AuthRequest, res: Response) => {
 
   const client = await prisma.client.create({
     data: {
-      name, phone, email, source, status, notes,
+      name, phone, email, source, status, notes, school,
       assignedToId: req.userId,
     },
   });
@@ -71,11 +71,11 @@ router.get('/:id', authenticate, async (_req: AuthRequest, res: Response) => {
 // PUT /api/clients/:id
 router.put('/:id', authenticate, async (req: AuthRequest, res: Response) => {
   const { id } = req.params;
-  const { name, phone, email, source, status, notes } = req.body;
+  const { name, phone, email, source, status, notes, school } = req.body;
 
   const client = await prisma.client.update({
     where: { id },
-    data: { name, phone, email, source, status, notes },
+    data: { name, phone, email, source, status, notes, school },
   });
 
   return res.json(client);

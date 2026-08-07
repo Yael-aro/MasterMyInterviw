@@ -1,7 +1,6 @@
 // Client types
 export type ClientSource = 'LINKEDIN' | 'WHATSAPP' | 'REFERRAL' | 'WEBSITE' | 'OTHER';
 export type ClientStatus = 'PROSPECT' | 'IN_PREP' | 'INTERVIEWED' | 'PLACED';
-
 export interface Client {
   id: string;
   name: string;
@@ -10,7 +9,7 @@ export interface Client {
   source: ClientSource;
   status: ClientStatus;
   notes?: string;
-  meetLink?: string | null;
+  school?: string;
   assignedToId?: string;
   createdAt: string;
   updatedAt: string;
@@ -18,7 +17,6 @@ export interface Client {
   payments?: Payment[];
   _count?: { appointments: number; payments: number };
 }
-
 // Appointment types
 export type AppointmentType =
   | 'ONLINE_COACHING'
@@ -28,9 +26,7 @@ export type AppointmentType =
   | 'MOCK_INTERVIEW'
   | 'CV_OPTIM'
   | 'LINKEDIN_OPTIM';
-
 export type AppointmentStatus = 'SCHEDULED' | 'COMPLETED' | 'CANCELLED';
-
 export interface Appointment {
   id: string;
   clientId: string;
@@ -44,11 +40,9 @@ export interface Appointment {
   client?: { id: string; name: string; phone: string };
   payments?: Payment[];
 }
-
 // Payment types
 export type PaymentMethod = 'TRANSFER' | 'CASH' | 'WHATSAPP' | 'OTHER';
 export type PaymentStatus = 'PAID' | 'PENDING';
-
 export interface Payment {
   id: string;
   clientId: string;
@@ -62,7 +56,6 @@ export interface Payment {
   client?: { id: string; name: string };
   appointment?: { id: string; type: string; date: string };
 }
-
 // Dashboard types
 export interface DashboardStats {
   monthRevenue: number;
@@ -71,12 +64,10 @@ export interface DashboardStats {
   todayCount: number;
   upcomingAppointments: Appointment[];
 }
-
 export interface RevenueChartData {
   month: string;
   revenue: number;
 }
-
 // User types
 export interface User {
   id: string;

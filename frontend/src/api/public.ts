@@ -7,6 +7,8 @@ export interface BookingPayload {
   appointmentType: string;
   preferredPeriod?: string;
   message?: string;
+  school?: string;
+  applicationType?: string;
 }
 
 export const submitBooking = async (payload: BookingPayload) => {

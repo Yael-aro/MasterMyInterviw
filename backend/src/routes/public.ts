@@ -9,9 +9,17 @@ const VALID_APPOINTMENT_TYPES = [
   'MOCK_INTERVIEW', 'CV_OPTIM', 'LINKEDIN_OPTIM',
 ];
 
+const APPLICATION_TYPE_LABELS: Record<string, string> = {
+  STAGE_PFE: 'Stage PFE',
+  CDI: 'CDI',
+  STAGE_CLASSIQUE: 'Stage classique',
+  ENTRETIEN_ECOLE: "Entretien d'école",
+  AUTRE: 'Autre',
+};
+
 // POST /api/public/booking — accessible sans authentification
 router.post('/booking', async (req: Request, res: Response) => {
-  const { name, phone, email, appointmentType, preferredPeriod, message } = req.body;
+  const { name, phone, email, appointmentType, preferredPeriod, message, school, applicationType } = req.body;
 
   if (!name || !phone) {
     return res.status(400).json({ error: 'Nom et téléphone requis' });
@@ -28,6 +36,7 @@ router.post('/booking', async (req: Request, res: Response) => {
         source: 'WEBSITE',
         status: 'PROSPECT',
         notes: message || undefined,
+        school: school || undefined,
       },
     });
 
@@ -38,6 +47,7 @@ router.post('/booking', async (req: Request, res: Response) => {
     placeholderDate.setHours(10, 0, 0, 0);
 
     const noteParts: string[] = ['⚠️ Réservation via le site — à confirmer avec le client'];
+    if (applicationType) noteParts.unshift(`Type de candidature : ${APPLICATION_TYPE_LABELS[applicationType] || applicationType}`);
     if (preferredPeriod) noteParts.unshift(`Période souhaitée : ${preferredPeriod}`);
 
     await prisma.appointment.create({
@@ -46,7 +56,7 @@ router.post('/booking', async (req: Request, res: Response) => {
         date: placeholderDate,
         type,
         status: 'SCHEDULED',
-        notes: noteParts.join(' — '),
+        notes: noteParts.join('\n'),
       },
     });
 

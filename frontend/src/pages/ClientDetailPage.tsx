@@ -3,7 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   ArrowLeft, Edit2, Trash2, Phone, Mail, Calendar,
-  CreditCard, Plus, User, MessageSquare
+  CreditCard, Plus, User, MessageSquare, GraduationCap
 } from 'lucide-react';
 import { getClient, updateClient, deleteClient } from '../api/clients';
 import { ClientStatusStepper } from '../components/clients/ClientStatusStepper';
@@ -124,6 +124,7 @@ export const ClientDetailPage = () => {
               <div className="flex items-center gap-4 flex-wrap text-sm text-cream-muted">
                 <span className="flex items-center gap-1.5"><Phone size={13} />{client.phone}</span>
                 {client.email && <span className="flex items-center gap-1.5"><Mail size={13} />{client.email}</span>}
+                {client.school && <span className="flex items-center gap-1.5"><GraduationCap size={13} className="text-gold" />{client.school}</span>}
                 <span className="text-cream-subtle">{CLIENT_SOURCE_LABELS[client.source as keyof typeof CLIENT_SOURCE_LABELS]}</span>
               </div>
               <p className="text-xs text-cream-subtle mt-1">
@@ -185,18 +186,27 @@ export const ClientDetailPage = () => {
         ) : (
           <div className="space-y-2">
             {appointments.map((appt) => (
-              <div key={appt.id} className="flex items-center justify-between p-3 bg-bg-secondary rounded-lg">
-                <div>
-                  <p className="text-sm text-cream font-medium">
-                    {APPOINTMENT_TYPE_LABELS[appt.type as AppointmentType]}
-                  </p>
-                  <p className="text-xs text-cream-muted">
-                    {format(new Date(appt.date), "d MMMM yyyy 'à' HH:mm", { locale: fr })} · {appt.duration} min
-                  </p>
+              <div key={appt.id} className="p-3 bg-bg-secondary rounded-lg">
+                <div className="flex items-center justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="text-sm text-cream font-medium">
+                      {APPOINTMENT_TYPE_LABELS[appt.type as AppointmentType]}
+                    </p>
+                    <p className="text-xs text-cream-muted">
+                      {format(new Date(appt.date), "d MMMM yyyy 'à' HH:mm", { locale: fr })} · {appt.duration} min
+                    </p>
+                  </div>
+                  <span className={`${APPOINTMENT_STATUS_STYLES[appt.status as AppointmentStatus]} shrink-0`}>
+                    {appt.status === 'SCHEDULED' ? 'Prévu' : appt.status === 'COMPLETED' ? 'Terminé' : 'Annulé'}
+                  </span>
                 </div>
-                <span className={APPOINTMENT_STATUS_STYLES[appt.status as AppointmentStatus]}>
-                  {appt.status === 'SCHEDULED' ? 'Prévu' : appt.status === 'COMPLETED' ? 'Terminé' : 'Annulé'}
-                </span>
+                {appt.notes && (
+                  <div className="mt-2 pt-2 border-t border-border space-y-0.5">
+                    {appt.notes.split('\n').map((line, i) => (
+                      <p key={i} className="text-xs text-cream-subtle">{line}</p>
+                    ))}
+                  </div>
+                )}
               </div>
             ))}
           </div>

@@ -29,7 +29,7 @@ const NAV_LINKS = [
   { label: 'Services', href: '#services' },
   { label: 'Avis', href: '#avis' },
 ];
-const AVATAR_COLORS = ['bg-blue-500', 'bg-emerald-500', 'bg-purple-500', 'bg-orange-500', 'bg-pink-500'];
+
 const SERVICE_IMAGE_FILES: Record<AppointmentType, string> = {
   ONLINE_COACHING: 'online-coaching.jpg',
   TECH_PREP: 'tech-prep.jpg',
@@ -61,7 +61,6 @@ const ServiceCard = ({ serviceKey }: { serviceKey: AppointmentType }) => {
         />
       )}
 
-      {/* Dark overlay for legibility */}
       <div className="absolute inset-0 bg-gradient-to-t from-bg-primary via-bg-primary/60 to-transparent" />
 
       <div className="relative h-full flex flex-col justify-end p-5">
@@ -72,6 +71,7 @@ const ServiceCard = ({ serviceKey }: { serviceKey: AppointmentType }) => {
     </div>
   );
 };
+
 const Navbar = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -146,6 +146,7 @@ const STATS = [
   { value: '5.8K+', label: 'Abonnés LinkedIn' },
   { value: '15 min', label: 'Réponse moyenne' },
 ];
+
 const Hero = () => {
   const [imgError, setImgError] = useState(false);
 
@@ -194,7 +195,6 @@ const Hero = () => {
           </p>
         </div>
 
-        {/* Photo */}
         <div className="relative flex justify-center lg:justify-end">
           <div
             className="absolute w-96 h-96 rounded-full opacity-50 blur-3xl pointer-events-none"
@@ -208,10 +208,9 @@ const Hero = () => {
                 alt="Yassine El Arousy"
                 className="w-full h-full object-cover object-top"
                 style={{
-                  filter: 'grayscale(1) contrast(1.1)',
-                  WebkitMaskImage: 'linear-gradient(to bottom, black 0%, transparent 100%), linear-gradient(to right, transparent 0%, black 0%, black 85%, transparent 100%)',
+                  WebkitMaskImage: 'linear-gradient(to bottom, black 65%, transparent 100%), linear-gradient(to right, transparent 0%, black 15%, black 85%, transparent 100%)',
                   WebkitMaskComposite: 'source-in',
-                  maskImage: 'linear-gradient(to bottom, black 0%, transparent 100%), linear-gradient(to right, transparent 0%, black 0%, black 85%, transparent 100%)',
+                  maskImage: 'linear-gradient(to bottom, black 65%, transparent 100%), linear-gradient(to right, transparent 0%, black 15%, black 85%, transparent 100%)',
                   maskComposite: 'intersect',
                 }}
                 onError={() => setImgError(true)}
@@ -228,7 +227,6 @@ const Hero = () => {
         </div>
       </div>
 
-      {/* Floating stats bar */}
       <div className="relative max-w-4xl mx-auto px-6 mb-16">
         <div className="card grid grid-cols-3 divide-x divide-border py-6 sm:py-8">
           {STATS.map((s) => (
@@ -246,14 +244,13 @@ const Hero = () => {
 const FEATURES = [
   { icon: Target, title: 'Préparation ciblée', text: 'Un plan de préparation adapté à ton secteur et au poste visé, pas une méthode générique.' },
   { icon: TrendingUp, title: 'Méthode éprouvée', text: 'Une approche testée sur des dizaines de candidats, affinée séance après séance.' },
-  { icon: Trophy, title: 'Résultats concrets', text: 'L\'objectif : que tu sortes de l\'entretien avec confiance, et une offre en poche.' },
+  { icon: Trophy, title: 'Résultats concrets', text: "L'objectif : que tu sortes de l'entretien avec confiance, et une offre en poche." },
 ];
-
 
 export const LandingPage = () => {
   const [form, setForm] = useState({
     name: '', phone: '', email: '', appointmentType: 'ONLINE_COACHING',
-    preferredPeriod: '', message: '',
+    preferredPeriod: '', message: '', school: '', applicationType: 'STAGE_PFE',
   });
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
 
@@ -268,7 +265,10 @@ export const LandingPage = () => {
     try {
       await submitBooking(form);
       setStatus('success');
-      setForm({ name: '', phone: '', email: '', appointmentType: 'ONLINE_COACHING', preferredPeriod: '', message: '' });
+      setForm({
+        name: '', phone: '', email: '', appointmentType: 'ONLINE_COACHING',
+        preferredPeriod: '', message: '', school: '', applicationType: 'STAGE_PFE',
+      });
     } catch {
       setStatus('error');
     }
@@ -279,7 +279,7 @@ export const LandingPage = () => {
       <Navbar />
       <Hero />
 
-      {/* Why section — features row, dark surface bg to break rhythm */}
+      {/* Why section */}
       <section id="pourquoi" className="bg-bg-surface border-y border-border">
         <div className="max-w-6xl mx-auto px-6 py-20">
           <div className="grid sm:grid-cols-3 gap-8">
@@ -297,32 +297,40 @@ export const LandingPage = () => {
       </section>
 
       {/* About */}
-      <section className="max-w-6xl mx-auto px-6 py-20">
-        <div className="grid sm:grid-cols-3 gap-10 items-center">
-          <div className="sm:col-span-1 flex justify-center sm:justify-start">
-            <div className="w-36 h-36 rounded-full bg-bg-surface border border-gold/30 flex items-center justify-center">
-              <span className="text-gold font-serif text-4xl">Y</span>
+      <section
+        className="relative py-20"
+        style={{
+          backgroundImage: "linear-gradient(to right, rgba(14,14,14,0.92), rgba(14,14,14,0.75)), url('/images/master_my_interview_cover.jpeg')",
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+        }}
+      >
+        <div className="max-w-6xl mx-auto px-6">
+          <div className="grid sm:grid-cols-3 gap-10 items-center">
+            <div className="sm:col-span-1 flex justify-center sm:justify-start">
+              <div className="w-36 h-36 rounded-full bg-bg-surface border border-gold/30 flex items-center justify-center">
+                <span className="text-gold font-serif text-4xl">Y</span>
+              </div>
             </div>
-          </div>
-          <div className="sm:col-span-2">
-            <p className="text-gold text-xs font-medium tracking-wide uppercase mb-3">À propos</p>
-            <h2 className="font-serif text-2xl sm:text-3xl text-cream mb-4">Yassine El Arousy</h2>
-            <p className="text-cream-muted mb-5 leading-relaxed">
-              Créateur LinkedIn Maroc, Top Voice en Conseil et Communication, consultant expert
-              pour les entretiens d'embauche et les stages. Plusieurs candidats m'ont déjà fait
-              confiance pour réussir leurs entretiens — à toi maintenant.
-            </p>
-            <div className="flex gap-5 text-sm text-cream-muted flex-wrap">
-              <span className="flex items-center gap-1.5"><Award size={15} className="text-gold" /> Top Voice LinkedIn</span>
-              <span className="flex items-center gap-1.5"><UsersIcon size={15} className="text-gold" /> 5,800+ abonnés</span>
-              <span className="flex items-center gap-1.5"><Star size={15} className="text-gold" /> Méthode éprouvée</span>
+            <div className="sm:col-span-2">
+              <p className="text-gold text-xs font-medium tracking-wide uppercase mb-3">À propos</p>
+              <h2 className="font-serif text-2xl sm:text-3xl text-cream mb-4">Yassine El Arousy</h2>
+              <p className="text-cream-muted mb-5 leading-relaxed">
+                Créateur LinkedIn Maroc, Top Voice en Conseil et Communication, consultant expert
+                pour les entretiens d'embauche et les stages. Plusieurs candidats m'ont déjà fait
+                confiance pour réussir leurs entretiens — à toi maintenant.
+              </p>
+              <div className="flex gap-5 text-sm text-cream-muted flex-wrap">
+                <span className="flex items-center gap-1.5"><Award size={15} className="text-gold" /> Top Voice LinkedIn</span>
+                <span className="flex items-center gap-1.5"><UsersIcon size={15} className="text-gold" /> 5,800+ abonnés</span>
+                <span className="flex items-center gap-1.5"><Star size={15} className="text-gold" /> Méthode éprouvée</span>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-{/* Services */}
-
+      {/* Services */}
       <section id="services" className="bg-bg-surface border-y border-border">
         <div className="max-w-6xl mx-auto px-6 py-20">
           <p className="text-gold text-xs font-medium tracking-wide uppercase mb-3 text-center">Ce que je propose</p>
@@ -334,7 +342,6 @@ export const LandingPage = () => {
           </div>
         </div>
       </section>
-      
 
       {/* Testimonials */}
       <section id="avis" className="max-w-6xl mx-auto px-6 py-20">
@@ -384,6 +391,7 @@ export const LandingPage = () => {
                   required
                 />
               </div>
+
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="label">Téléphone *</label>
@@ -404,6 +412,33 @@ export const LandingPage = () => {
                   />
                 </div>
               </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="label">École / établissement</label>
+                  <input
+                    className="input"
+                    placeholder="ex: ENCG Casablanca"
+                    value={form.school}
+                    onChange={(e) => handleChange('school', e.target.value)}
+                  />
+                </div>
+                <div>
+                  <label className="label">Type de candidature</label>
+                  <select
+                    className="input"
+                    value={form.applicationType}
+                    onChange={(e) => handleChange('applicationType', e.target.value)}
+                  >
+                    <option value="STAGE_PFE">Stage PFE</option>
+                    <option value="CDI">CDI</option>
+                    <option value="STAGE_CLASSIQUE">Stage classique</option>
+                    <option value="ENTRETIEN_ECOLE">Entretien d'école</option>
+                    <option value="AUTRE">Autre</option>
+                  </select>
+                </div>
+              </div>
+
               <div>
                 <label className="label">Service souhaité</label>
                 <select
@@ -416,6 +451,7 @@ export const LandingPage = () => {
                   ))}
                 </select>
               </div>
+
               <div>
                 <label className="label">Période souhaitée</label>
                 <input
@@ -425,6 +461,7 @@ export const LandingPage = () => {
                   onChange={(e) => handleChange('preferredPeriod', e.target.value)}
                 />
               </div>
+
               <div>
                 <label className="label">Message (optionnel)</label>
                 <textarea
@@ -434,9 +471,11 @@ export const LandingPage = () => {
                   onChange={(e) => handleChange('message', e.target.value)}
                 />
               </div>
+
               {status === 'error' && (
                 <p className="text-error text-sm">Une erreur est survenue, réessaie dans un instant.</p>
               )}
+
               <button type="submit" disabled={status === 'loading'} className="btn-primary w-full">
                 {status === 'loading' ? 'Envoi...' : 'Réserver ma séance'}
               </button>

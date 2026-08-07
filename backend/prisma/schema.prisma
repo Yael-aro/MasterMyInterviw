@@ -24,9 +24,10 @@ model Client {
   name         String
   phone        String
   email        String?
-  source       String   @default("OTHER") // "LINKEDIN" | "WHATSAPP" | "REFERRAL" | "OTHER"
+  source       String   @default("OTHER") // "LINKEDIN" | "WHATSAPP" | "REFERRAL" | "WEBSITE" | "OTHER"
   status       String   @default("PROSPECT") // "PROSPECT" | "IN_PREP" | "INTERVIEWED" | "PLACED"
   notes        String?
+  school       String?
   assignedToId String?
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
